@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="options.css">
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <h1>Options</h1>
+
+    <div class="row">
+      <section class="col">
+        <div>
+          <label>New filler data</label>
+        </div>
+        <div>
+          <textarea id="editor"></textarea>
+          <p>
+            {
+              "label": "",
+              "url": "",
+              "formHandle": "",
+              "inputs": [
+                { "handle": "", "value": "" }
+              ]
+            }
+          </p>
+        </div>
+        <button id="save-btn">Save</button>
+      </section>
+
+      <section class="col">
+        <ul id="listing"></ul>
+      </section>
+    </div>
+  </body>
+  <script src="options.js"></script>
+</html>
