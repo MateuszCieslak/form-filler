@@ -71,6 +71,9 @@ let data = [];
 function init() {
   chrome.storage.sync.get("items", (loaded) => {
     data = loaded["items"];
+    if(!(data)) {
+      data = [];
+    }
     render(data);
   });
 }

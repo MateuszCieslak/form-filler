@@ -1,12 +1,18 @@
 import { getRandomInt } from './helpers/common.js';
 import { generateNip } from './helpers/nip.js';
 import { generateRegon } from './helpers/regon.js';
+import { generatePesel } from './helpers/pesel.js';
+import { getRandomIban } from './helpers/iban-generator.js';
+import { generateIdNumber } from './helpers/id-number-generator.js';
 
 const itemsHandle = document.getElementById("items");
 const replacments = [
   { key: 'NIP', func: () => generateNip() },
   { key: 'REGON', func: () => generateRegon() },
-  { key: 'RAND', func: () => getRandomInt(1, 9999) }
+  { key: 'RAND', func: () => getRandomInt(1000, 99999) },
+  { key: 'PESEL', func: () => generatePesel() },
+  { key: 'IBAN', func: () => getRandomIban() },
+  { key: 'IDDOCUMENT', func: () => generateIdNumber() }
 ]
 
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -14,7 +20,6 @@ chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
   const currentUrl = activeTab.url;
   chrome.storage.sync.get(["items"], (items) => {
     const data = items['items'].filter((item) => currentUrl.indexOf(item.url) >= 0);
-    console.log(data, generateNip());
     data.forEach(item => {
       const btn = document.createElement('button');
       btn.innerText = item.label;
@@ -57,6 +62,29 @@ const adjustForm = (itemData, replacments) => {
     const changeEvent = new Event("input");
     input.dispatchEvent(changeEvent);
   });
+}
+
+replacments.forEach(rep => {
+  const btn = document.createElement('button');
+  btn.innerText = rep.key;
+  btn.onclick = () => setGeneratedValue(rep.func());
+  document.getElementById('generators').append(btn);
+});
+
+function setGeneratedValue(value) {
+  document.getElementById('generated').value = value;
+  setToFocusedElement(value);
+}
+
+function setToFocusedElement(value) {
+    chrome.tabs.query({ active: true, currentWindow: true })
+    .then((x) => {
+      chrome.scripting.executeScript({
+        target: { tabId: x[0].id },
+        function: (val) => document.activeElement.value = val,
+        args: [value]
+      });
+    });
 }
 
 /**** NIP ****/
