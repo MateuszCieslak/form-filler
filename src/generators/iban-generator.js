@@ -1,4 +1,4 @@
-import { getRandomInt, addLeadingZeros } from './common.js';
+import { getRandomInt, prependZeros } from './common.js';
 import { bigInt } from './BigInteger.min.js';
 
 var unitCodes = [
@@ -37,14 +37,14 @@ function getRandomUnitCode() {
 
 function getIbanRandomPart() {
     var randomInt = getRandomInt(0, 9999999999999999);
-    return addLeadingZeros(randomInt, 16);
+    return prependZeros(randomInt, 16);
 }
 
 function getIbanControlSumField(base) {
     var baseNumber = bigInt(base + "252100");
     var rest = baseNumber.divmod(97);
     var controlNumber = 98 - rest.remainder.value;
-    return addLeadingZeros(controlNumber, 2);
+    return prependZeros(controlNumber, 2);
 }
 
 function prettyFormated(iban) {

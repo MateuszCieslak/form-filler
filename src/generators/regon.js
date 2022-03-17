@@ -1,4 +1,4 @@
-import { getRandomInt, addLeadingZeros } from './common.js';
+import { getRandomInt, prependZeros } from './common.js';
 
 export function generateRegon() {
     var provinceCode = getRandomProvinceCode();
@@ -11,12 +11,12 @@ export function generateRegon() {
 function getRandomProvinceCode() {
     var random = getRandomInt(0, 48);
     var provinceCode = 2 * random + 1;
-    return addLeadingZeros(provinceCode, 2);
+    return prependZeros(provinceCode, 2);
 }
 
 function getRegonRandomPart() {
     var randomInt = getRandomInt(0, 999999);
-    return addLeadingZeros(randomInt, 6);
+    return prependZeros(randomInt, 6);
 }
 
 function getRegonControlSumField(base) {

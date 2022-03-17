@@ -1,4 +1,4 @@
-import { getRandomInt, addLeadingZeros } from './common.js';
+import { getRandomInt, prependZeros } from './common.js';
 
 export function generatePesel() {
     const date = new Date(getRandomInt(1960, 2000), getRandomInt(0, 11), getRandomInt(1, 28));
@@ -62,7 +62,7 @@ function extractDay(date) {
 
 function getSeriesFields() {
     var randomInt = getRandomInt(0, 999);
-    return addLeadingZeros(randomInt, 3);
+    return prependZeros(randomInt, 3);
 }
 
 function getSexField(sex) {

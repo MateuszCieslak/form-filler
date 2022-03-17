@@ -1,4 +1,4 @@
-import { getRandomInt, addLeadingZeros } from './common.js';
+import { getRandomInt, prependZeros } from './common.js';
 
 var officeCodes = [
   "107", "108", "109", "111", "112", "113", "114", "115", "116", "117", "118", "119", "121", "122", "123", "124",
@@ -27,7 +27,7 @@ function getRandomOfficeCode() {
 
 function getRandomPart() {
   var randomInt = getRandomInt(0, 999999);
-  return addLeadingZeros(randomInt, 6);
+  return prependZeros(randomInt, 6);
 }
 
 function getNipControlSumField(base) {
