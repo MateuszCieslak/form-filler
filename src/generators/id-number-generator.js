@@ -6,10 +6,10 @@ const lettersWithValues = {};
 });
 
 export function generateIdNumber() {
-    var lettersPart = generateSeries(lettersWithValues);
-    var digitsPart = getDigitsPart();
-    var controlSum = getControlSum(lettersPart, digitsPart);
-    return lettersPart + controlSum + digitsPart;
+    const series = generateSeries(lettersWithValues);
+    const number = generateNumber();
+    const controlSum = getControlSum(series, number, lettersWithValues);
+    return series + controlSum + number;
 }
 
 function generateSeries(lettersWithValues) {
@@ -18,14 +18,13 @@ function generateSeries(lettersWithValues) {
     return rands.reduce((prev, current) => prev += letters[current], '');
 }
 
-function getDigitsPart() {
-    var randomInt = getRandomInt(0, 99999);
-    return "" + prependZeros(randomInt, 5);
+function generateNumber() {
+    return prependZeros(getRandomInt(0, 99999), 5);
 }
 
-function getControlSum(lettersPart, digitsPart) {
-    var controlSum =  7 * lettersWithValues[lettersPart[0]] + 3 * lettersWithValues[lettersPart[1]] + 1 * lettersWithValues[lettersPart[2]] +
-        7 * digitsPart[0] + 3 * digitsPart[1] + 1 * digitsPart[2] + 7 * digitsPart[3] + 3 * digitsPart[4];
+function getControlSum(series, number, lettersWithValues) {
+    var controlSum =  7 * lettersWithValues[series[0]] + 3 * lettersWithValues[series[1]] + 1 * lettersWithValues[series[2]] +
+        7 * number[0] + 3 * number[1] + 1 * number[2] + 7 * number[3] + 3 * number[4];
     var controlSumLastDigit = controlSum % 10;
     return controlSumLastDigit;
 }

@@ -11,10 +11,10 @@ export function getRandomInt(min, max) {
 /**
  * Functions adds 0 characters before value a certain number of times
  * @param value
- * @param numberOfPrepends
+ * @param expectedLength
  * @returns {string}
  */
-export function prependZeros(value, numberOfPrepends) {
-    const amount = numberOfPrepends - value.toString().length;
-    return [...Array(amount)].reduce((acc, val) => '0' + acc, value);
+export function prependZeros(value, expectedLength) {
+    const amount = expectedLength - value.toString().length;
+    return [...Array(amount)].reduce((acc, val) => '0' + acc, value.toString());
 }
