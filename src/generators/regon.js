@@ -1,30 +1,17 @@
 import { getRandomInt, prependZeros } from './common.js';
 
+const generateProvinceCode = () => prependZeros(getRandomInt(1, 97), 2);
+const generateRandomPart = () => prependZeros(getRandomInt(0, 999999), 6);
+const calculateControlSum = (number) => {
+    const weights = [8, 9, 2, 3, 4, 5, 6, 7];
+    const sum = weights.reduce((acc, val, i) => acc + val * number[i], 0);
+    const modulo = sum % 11;
+    return modulo === 10 ? "0" : modulo.toString();
+}
+
 export function generateRegon() {
-    var provinceCode = getRandomProvinceCode();
-    var randomPart = getRegonRandomPart();
-    var base = "" + provinceCode + randomPart;
-    var controlSum = getRegonControlSumField(base);
-    return base + controlSum;
-}
-
-function getRandomProvinceCode() {
-    var random = getRandomInt(0, 48);
-    var provinceCode = 2 * random + 1;
-    return prependZeros(provinceCode, 2);
-}
-
-function getRegonRandomPart() {
-    var randomInt = getRandomInt(0, 999999);
-    return prependZeros(randomInt, 6);
-}
-
-function getRegonControlSumField(base) {
-    var controlSum = 8 * base[0] + 9 * base[1] + 2 * base[2] + 3 * base[3] + 4 * base[4]
-        + 5 * base[5] + 6 * base[6] + 7 * base[7];
-    var controlSumRest = controlSum % 11;
-    if (controlSumRest == 10) {
-        return 0;
-    }
-    return controlSumRest;
+    const provinceCode = generateProvinceCode();
+    const randomPart = generateRandomPart();
+    const controlSum = calculateControlSum(provinceCode + randomPart);
+    return provinceCode + randomPart + controlSum;
 }
