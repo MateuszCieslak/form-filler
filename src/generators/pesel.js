@@ -1,92 +1,51 @@
 import { getRandomInt, prependZeros } from './common.js';
 
+/**
+ * Generates random PESEL number
+ * @returns {string}
+ */
 export function generatePesel() {
     const date = new Date(getRandomInt(1950, 2020), getRandomInt(0, 11), getRandomInt(1, 28));
     const sex = getRandomInt(0, 1) % 2 == 0 ? "male" : "female";
-    return generatePeselBase(date, sex);
+    const birthDatePart = generateBrithDatePart(date);
+    const seriesPart = prependZeros(getRandomInt(0, 999), 3) + getSexNumber(sex);
+    const controlSum = calculateControlSum(birthDatePart + seriesPart);
+    return birthDatePart + seriesPart + controlSum;
 }
 
-function generatePeselBase(date, sex) {
-    var birthDate = getBirthDateFields(date);
-    var seriesFields = getSeriesFields()
-    var sexField = getSexField(sex);
-    var base = birthDate + seriesFields + sexField;
-    var controlSumField = getControlSumField(base)
-    return base + controlSumField;
-}
-
-function randomDate(start, end) {
-    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-}
-
-function getBirthDateFields(date) {
+function generateBrithDatePart(date) {
     let month = date.getMonth() + 1;
     if(date.getFullYear() >= 2000) {
         month += 20;
     }
-    return date.getFullYear().toString().substring(2, 4) + month + prependZeros(date.getDate(), 2);
-    // return extractYear(date) + extractMonth(date) + extractDay(date);
+    return date.getFullYear().toString().substring(2, 4)
+        + prependZeros(month, 2)
+        + prependZeros(date.getDate(), 2);
 }
 
-// function extractYear(date) {
-//     var yearFields = date.getFullYear() % 100;
-//     if (yearFields < 10) {
-//         return "0" + yearFields;
-//     }
-//     return "" + yearFields;
-// }
-//
-// function extractMonth(date) {
-//     var year = date.getFullYear();
-//     var monthFields = (date.getMonth() + 1);
-//     if (year >= 1800 && year <= 1899) {
-//         monthFields += 80;
-//     }
-//     if (year >= 2000 && year <= 2099) {
-//         monthFields += 20;
-//     }
-//     if (year >= 2100 && year <= 2199) {
-//         monthFields += 40;
-//     }
-//     if (year >= 2200 && year <= 2299) {
-//         monthFields += 60;
-//     }
-//     if (monthFields < 10) {
-//         monthFields = "0" + monthFields;
-//     }
-//     return "" + monthFields;
-// }
-//
-// function extractDay(date) {
-//     var dayFields = date.getDate();
-//     if (dayFields < 10) {
-//         return "0" + dayFields;
-//     }
-//     return "" + dayFields;
-// }
-
-function getSeriesFields() {
-    var randomInt = getRandomInt(0, 999);
-    return prependZeros(randomInt, 3);
-}
-
-function getSexField(sex) {
+/**
+ *
+ * @param sex male|female
+ * @returns {number}
+ */
+function getSexNumber(sex) {
+    const result = getRandomInt(0, 4) * 2;
     if (sex == "male") {
-        return getRandomInt(0, 4) * 2 + 1;
+        return result + 1;
     }
-    if (sex == "female") {
-        return getRandomInt(0, 4) * 2;
-    }
-    return getRandomInt(0, 9);
+
+    return result;
 }
 
-function getControlSumField(base) {
-    var controlSum = 1 * base[0] + 3 * base[1] + 7 * base[2] + 9 * base[3] + 1 * base[4]
-        + 3 * base[5] + 7 * base[6] + 9 * base[7] + 1 * base[8] + 3 * base[9];
-    var controlSumLastDigit = controlSum % 10;
-    var controlDigit = 10 - controlSumLastDigit;
-    if (controlDigit == 10) {
-        return "0";
-    }
-    return "" + controlDigit;
+/**
+ *
+ * @param base pesel number part without control sum
+ * @returns {string}
+ */
+function calculateControlSum(base) {
+    const weights = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3];
+    const sum = base.split('').reduce((acc, val, i) => acc + val * weights[i], 0);
+    const lastDigit = sum % 10;
+    const controlSum = 10 - lastDigit;
+    return controlSum === 10 ? "0" : controlSum.toString();
 }
