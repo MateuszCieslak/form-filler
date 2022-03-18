@@ -1,14 +1,14 @@
-import { getRandomInt, addLeadingZeros, prependZeros } from "./common.js";
+import { getRandomInt, prependZeros } from "./common.js";
 
 const lettersWithValues = {};
-"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach((l, i) => {
-    lettersWithValues[l] = i;
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach((letter, i) => {
+    lettersWithValues[letter] = i + 10;
 });
 
-export function generateIdNumber() {
+export function generateIdDocument() {
     const series = generateSeries(lettersWithValues);
-    const number = generateNumber();
-    const controlSum = getControlSum(series, number, lettersWithValues);
+    const number = prependZeros(getRandomInt(0, 99999), 5);
+    const controlSum = calculateControlSum(series, number, lettersWithValues);
     return series + controlSum + number;
 }
 
@@ -18,14 +18,16 @@ function generateSeries(lettersWithValues) {
     return rands.reduce((prev, current) => prev += letters[current], '');
 }
 
-function generateNumber() {
-    return prependZeros(getRandomInt(0, 99999), 5);
-}
+function calculateControlSum(series, number, lettersWithValues) {
+    const sum = 7 * lettersWithValues[series[0]]
+        + 3 * lettersWithValues[series[1]]
+        + 1 * lettersWithValues[series[2]]
+        + 7 * number[0]
+        + 3 * number[1]
+        + 1 * number[2]
+        + 7 * number[3]
+        + 3 * number[4];
 
-function getControlSum(series, number, lettersWithValues) {
-    var controlSum =  7 * lettersWithValues[series[0]] + 3 * lettersWithValues[series[1]] + 1 * lettersWithValues[series[2]] +
-        7 * number[0] + 3 * number[1] + 1 * number[2] + 7 * number[3] + 3 * number[4];
-    var controlSumLastDigit = controlSum % 10;
-    return controlSumLastDigit;
+    return sum % 10;
 }
 
