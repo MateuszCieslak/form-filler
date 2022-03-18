@@ -18,7 +18,7 @@ test('Generating pesel number', () => {
 
     // When
     const pesel = generatePesel();
-    
+
     // Then
     expect(pesel).not.toBeNull();
     expect(validate(pesel)).toBeTruthy();

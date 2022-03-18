@@ -1,7 +1,7 @@
 import { getRandomInt, prependZeros } from './common.js';
 
 export function generatePesel() {
-    const date = new Date(getRandomInt(1960, 2000), getRandomInt(0, 11), getRandomInt(1, 28));
+    const date = new Date(getRandomInt(1950, 2020), getRandomInt(0, 11), getRandomInt(1, 28));
     const sex = getRandomInt(0, 1) % 2 == 0 ? "male" : "female";
     return generatePeselBase(date, sex);
 }
@@ -20,45 +20,50 @@ function randomDate(start, end) {
 }
 
 function getBirthDateFields(date) {
-    return extractYear(date) + extractMonth(date) + extractDay(date);
+    let month = date.getMonth() + 1;
+    if(date.getFullYear() >= 2000) {
+        month += 20;
+    }
+    return date.getFullYear().toString().substring(2, 4) + month + prependZeros(date.getDate(), 2);
+    // return extractYear(date) + extractMonth(date) + extractDay(date);
 }
 
-function extractYear(date) {
-    var yearFields = date.getFullYear() % 100;
-    if (yearFields < 10) {
-        return "0" + yearFields;
-    }
-    return "" + yearFields;
-}
-
-function extractMonth(date) {
-    var year = date.getFullYear();
-    var monthFields = (date.getMonth() + 1);
-    if (year >= 1800 && year <= 1899) {
-        monthFields += 80;
-    }
-    if (year >= 2000 && year <= 2099) {
-        monthFields += 20;
-    }
-    if (year >= 2100 && year <= 2199) {
-        monthFields += 40;
-    }
-    if (year >= 2200 && year <= 2299) {
-        monthFields += 60;
-    }
-    if (monthFields < 10) {
-        monthFields = "0" + monthFields;
-    }
-    return "" + monthFields;
-}
-
-function extractDay(date) {
-    var dayFields = date.getDate();
-    if (dayFields < 10) {
-        return "0" + dayFields;
-    }
-    return "" + dayFields;
-}
+// function extractYear(date) {
+//     var yearFields = date.getFullYear() % 100;
+//     if (yearFields < 10) {
+//         return "0" + yearFields;
+//     }
+//     return "" + yearFields;
+// }
+//
+// function extractMonth(date) {
+//     var year = date.getFullYear();
+//     var monthFields = (date.getMonth() + 1);
+//     if (year >= 1800 && year <= 1899) {
+//         monthFields += 80;
+//     }
+//     if (year >= 2000 && year <= 2099) {
+//         monthFields += 20;
+//     }
+//     if (year >= 2100 && year <= 2199) {
+//         monthFields += 40;
+//     }
+//     if (year >= 2200 && year <= 2299) {
+//         monthFields += 60;
+//     }
+//     if (monthFields < 10) {
+//         monthFields = "0" + monthFields;
+//     }
+//     return "" + monthFields;
+// }
+//
+// function extractDay(date) {
+//     var dayFields = date.getDate();
+//     if (dayFields < 10) {
+//         return "0" + dayFields;
+//     }
+//     return "" + dayFields;
+// }
 
 function getSeriesFields() {
     var randomInt = getRandomInt(0, 999);
