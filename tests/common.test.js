@@ -11,3 +11,8 @@ test('Add 0 characters to string 0 times', () => {
     expect(value).toBe('1');
     expect(typeof value).toBe('string');
 });
+
+test('Passed value is longer than expected length', () => {
+    const value = prependZeros(123, 1);
+    expect(value).toBe('123');
+})

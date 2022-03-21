@@ -16,5 +16,8 @@ export function getRandomInt(min, max) {
  */
 export function prependZeros(value, expectedLength) {
     const amount = expectedLength - value.toString().length;
+    if(amount < 0) {
+        return value.toString();
+    }
     return [...Array(amount)].reduce((acc, val) => '0' + acc, value.toString());
 }
