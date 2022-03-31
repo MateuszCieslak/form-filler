@@ -45,7 +45,7 @@
 
     function onEdit(item) {
         createMode = true;
-        currentItem = JSON.stringify(item);
+        currentItem = item;
     }
 
     function close() {
@@ -70,7 +70,7 @@
                     <span class="material-icons">close</span>
                 </button>
             </div>
-            <Create text={currentItem} on:templateAdded={handleTemplateAdded}></Create>
+            <Create template={currentItem} on:templateAdded={handleTemplateAdded}></Create>
         </div>
     {/if}
 

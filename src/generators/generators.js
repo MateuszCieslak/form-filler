@@ -4,6 +4,7 @@ import { getRandomInt } from "./common.js";
 import { generatePesel } from "./pesel.js";
 import { getRandomIban } from "./iban-generator.js";
 import { generateIdDocument } from "./id-number-generator.js";
+import { guid } from "./guid";
 
 export const generators = [
     { key: 'NIP', func: () => generateNip() },
@@ -11,5 +12,6 @@ export const generators = [
     { key: 'RAND', func: () => getRandomInt(1000, 99999) },
     { key: 'PESEL', func: () => generatePesel() },
     { key: 'IBAN', func: () => getRandomIban() },
-    { key: 'IDDOCUMENT', func: () => generateIdDocument() }
+    { key: 'IDDOCUMENT', func: () => generateIdDocument() },
+    { key: 'GUID', func: () => guid() }
 ]
