@@ -199,10 +199,6 @@
 </div>
 
 <style>
-    textarea {
-        height: 300px;
-    }
-
     .form-group {
         margin-bottom: 1rem;
     }
