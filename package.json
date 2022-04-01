@@ -6,7 +6,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear -p 3000",
-    "test": "jest"
+    "test": "jest --watch"
   },
   "jest": {
     "transform": {
@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "sirv-cli": "^2.0.0",
-    "svelte-forms-lib": "^2.0.1",
     "yup": "^0.32.11"
   }
 }

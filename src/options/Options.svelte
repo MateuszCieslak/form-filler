@@ -14,8 +14,8 @@
         }
     });
 
-    function remove(label) {
-        items = items.filter(i => i.label !== label);
+    function remove(id) {
+        items = items.filter(i => i.id !== id);
         saveData('items', items);
     }
 
@@ -54,7 +54,7 @@
     }
 
     function handleTemplateAdded(event) {
-        items = items.filter(i => i.label !== event.detail.label);
+        items = items.filter(i => i.id !== event.detail.id);
         items = [...items, event.detail];
         close();
     }
@@ -94,7 +94,7 @@
                                 <button class="btn btn-sm btn-link" on:click={onEdit(item)}>
                                     <span class="material-icons">mode_edit</span>
                                 </button>
-                                <button class="btn btn-sm btn-link" on:click={remove(item.label)}>
+                                <button class="btn btn-sm btn-link" on:click={remove(item.id)}>
                                     <span class="material-icons">delete</span>
                                 </button>
                             </td>

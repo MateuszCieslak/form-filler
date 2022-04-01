@@ -2,10 +2,10 @@
     import { generators } from "../generators/generators";
     import { getData, saveData } from "../data.service";
     import { createEventDispatcher, onMount } from "svelte";
-    import { createForm } from "svelte-forms-lib";
-    import * as yup from "yup";
+    import { object, string, array } from 'yup';
     import { setLocale } from "yup";
     import { guid } from "../generators/guid";
+    import { addPopertyByPath } from "../object.helper";
 
     setLocale({
         mixed: {
@@ -14,88 +14,79 @@
         }
     });
 
-    const {
-        form,
-        errors,
-        state,
-        handleChange,
-        handleSubmit,
-        handleReset,
-        isValid,
-        updateInitialValues
-    } = createForm({
-        initialValues: {
-            id: guid(),
-            // label: "",
-            // url: "",
-            formHandle: "",
-            inputs: [
-                {
-                    handle: "",
-                    value: ""
-                }
-            ]
-        },
-        validationSchema: yup.object().shape({
-            label: yup.string().required(),
-            url: yup.string().required(),
-            formHandle: yup.string().required(),
-            inputs: yup.array().of(
-                yup.object().shape({
-                    handle: yup.string().required(),
-                    value: yup.string().required()
-                })
-            )
-        }),
-        onSubmit: async (values) => {
-            console.log(values);
-            // const obj = values;
-            // let items = await getData('items');
-            // items = items.filter(i => i.label !== obj.label);
-            // items = [...items, obj];
-            // saveData("items", items);
-            // dispatch('templateAdded', obj);
-        }
+    const schema = object().shape({
+        label: string().required(),
+        url: string().required(),
+        formHandle: string().required(),
+        inputs: array().required().min(1).of(
+            object().shape({
+                handle: string().required(),
+                value: string().required()
+            })
+        )
     });
-
-    const add = () => {
-        $form.inputs = $form.inputs.concat({ handle: "", value: "" });
-        $errors.inputs = $errors.inputs.concat({ handle: "", value: "" });
-    };
-
-    const remove = i => () => {
-        $form.inputs = $form.inputs.filter((u, j) => j !== i);
-        $errors.inputs = $errors.inputs.filter((u, j) => j !== i);
-    };
 
     const dispatch = createEventDispatcher();
-    export let template;
 
-    onMount(() => {
+    export let template;
+    let form = {
+        id: guid(),
+        label: "",
+        url: "",
+        formHandle: "",
+        inputs: [
+            {
+                handle: "",
+                value: ""
+            }
+        ]
+    };
+    let _errors = {};
+    $: errors = _errors;
+    $: isValid = schema.isValid(form);
+
+    const addInput = () => form.inputs = [...form.inputs, { handle: "", value: "" }];
+    const removeInput = i => () => form.inputs = form.inputs.filter((val, index) => index !== i);
+
+    async function submit() {
+        console.log(form);
+        let items = await getData('items');
+        items = items.filter(i => i.id !== form.id);
+        items = [...items, form];
+        saveData("items", items);
+        dispatch('templateAdded', form);
+    }
+
+    onMount(async () => {
         if(template) {
-            updateInitialValues(template);
+           form = Object.assign(form, template);
         }
     });
+
+    function validate(e) {
+        schema.validateAt(e.target.name, form)
+            .then(() => _errors = addPopertyByPath(_errors, e.target.name, undefined))
+            .catch(err => _errors = addPopertyByPath(_errors, e.target.name, err.errors[0]))
+    }
 </script>
 
 <div class="d-flex">
     <section class="flex-grow-1">
         <h2 class="heading-secondary mb-4">Template data</h2>
-        <form class="my-4" on:submit={handleSubmit}>
+
+        <form class="form" on:submit|preventDefault={submit}>
             <div class="form-group row">
                 <div class="col-6">
                     <input
                       class="form-control"
                       type="text"
                       name="label"
-                      bind:value={$form.label}
-                      placeholder="Label - name of Your template"
-                      on:change={handleChange}
-                      on:keyup={handleChange}
-                      on:blur={handleChange}
+                      bind:value={form.label}
+                      on:keyup={validate}
+                      on:blur={validate}
                     />
-                    {#if $errors.label}
-                        <small class="text-danger">{$errors.label}</small>
+                    {#if errors.label}
+                        <small class="text-danger">{errors.label}</small>
                     {/if}
                 </div>
                 <div class="col-6">
@@ -103,14 +94,12 @@
                       class="form-control"
                       type="text"
                       name="formHandle"
-                      bind:value={$form.formHandle}
-                      placeholder="Form selector - use css selector"
-                      on:change={handleChange}
-                      on:keyup={handleChange}
-                      on:blur={handleChange}
+                      bind:value={form.formHandle}
+                      on:keyup={validate}
+                      on:blur={validate}
                     />
-                    {#if $errors.formHandle}
-                        <small class="text-danger">{$errors.formHandle}</small>
+                    {#if errors.formHandle}
+                        <small class="text-danger">{errors.formHandle}</small>
                     {/if}
                 </div>
             </div>
@@ -120,68 +109,64 @@
                   class="form-control"
                   type="text"
                   name="url"
-                  bind:value={$form.url}
-                  placeholder="Url match"
-                  on:change={handleChange}
-                  on:keyup={handleChange}
-                  on:blur={handleChange}
+                  bind:value={form.url}
+                  on:keyup={validate}
+                  on:blur={validate}
                 />
-                {#if $errors.url}
-                    <small class="text-danger">{$errors.url}</small>
+                {#if errors.url}
+                    <small class="text-danger">{errors.url}</small>
                 {/if}
             </div>
 
-            {#each $form.inputs as input, j}
+            {#each form.inputs as input, j}
                 <div class="d-flex form-group">
                     <div class="flex-grow-1">
                         <div class="row">
                             <div class="col-6">
                                 <input
                                   class="form-control"
-                                  name={`inputs[${j}].handle`}
+                                  bind:value={input.handle}
+                                  name="{'inputs['+ j +'].handle'}"
                                   placeholder="Input selector - use css selector"
-                                  on:change={handleChange}
-                                  on:keyup={handleChange}
-                                  on:blur={handleChange}
-                                  bind:value={$form.inputs[j].handle}
+                                  on:keyup={validate}
+                                  on:blur={validate}
                                 />
-                                {#if $errors.inputs[j].handle}
-                                    <small class="text-danger">{$errors.inputs[j].handle}</small>
+                                {#if errors.inputs && errors.inputs[j]?.handle}
+                                    <small class="text-danger">{errors.inputs[j]?.handle}</small>
                                 {/if}
                             </div>
 
                             <div class="col-6">
                                 <input
                                   class="form-control"
-                                  placeholder="Value"
-                                  name={`inputs[${j}].value`}
-                                  on:change={handleChange}
-                                  on:keyup={handleChange}
-                                  on:blur={handleChange}
-                                  bind:value={$form.inputs[j].value}
+                                  placeholder="Input value"
+                                  name="{'inputs['+ j +'].value'}"
+                                  bind:value={input.value}
+                                  on:keyup={validate}
+                                  on:blur={validate}
                                 />
-                                {#if $errors.inputs[j].value}
-                                    <small class="text-danger">{$errors.inputs[j].value}</small>
+                                {#if errors.inputs && errors.inputs[j]?.value}
+                                    <small class="text-danger">{errors.inputs[j].value}</small>
                                 {/if}
                             </div>
                         </div>
                     </div>
 
                     <div class="ms-1">
-                        {#if $form.inputs.length !== 1}
-                            <button class="btn btn-outline-primary" type="button" on:click={remove(j)}>-</button>
+                        {#if form.inputs.length !== 1}
+                            <button class="btn btn-outline-primary" type="button" on:click={removeInput(j)}>-</button>
                         {/if}
                     </div>
                 </div>
             {/each}
 
             <div class="d-block text-end">
-                <button class="btn btn-outline-primary" type="button" on:click={add}>
+                <button class="btn btn-outline-primary" type="button" on:click={addInput}>
                     Add input
                 </button>
-                <button class="btn btn-outline-primary" type="button" on:click={handleSubmit} disabled="{!$isValid}">
-                    Save
-                </button>
+                {#await isValid then valid}
+                    <button type="submit" class="btn btn-outline-primary" disabled="{!valid}">Save</button>
+                {/await}
             </div>
         </form>
     </section>
