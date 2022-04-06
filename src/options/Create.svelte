@@ -81,6 +81,7 @@
                       class="form-control"
                       type="text"
                       name="label"
+                      placeholder="Template name"
                       bind:value={form.label}
                       on:keyup={validate}
                       on:blur={validate}
@@ -94,6 +95,7 @@
                       class="form-control"
                       type="text"
                       name="formHandle"
+                      placeholder="Form handle"
                       bind:value={form.formHandle}
                       on:keyup={validate}
                       on:blur={validate}
@@ -109,6 +111,7 @@
                   class="form-control"
                   type="text"
                   name="url"
+                  placeholder="Url - full or fragment to match"
                   bind:value={form.url}
                   on:keyup={validate}
                   on:blur={validate}
