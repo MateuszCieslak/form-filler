@@ -1,7 +1,11 @@
 chrome.runtime.onInstalled.addListener(async (details) => {
-    const query = await chrome.storage?.sync?.get('items');
-    let data = query['items'];
+    const storageKey = 'items';
+    const query = await chrome.storage?.sync?.get(storageKey);
+    let data = query[storageKey];
     if(!data) {
+        const obj = {};
+        obj[storageKey] = [];
+        await chrome.storage.sync.set(obj);
         return;
     }
 
@@ -11,6 +15,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
         }
     })
     const obj = {};
-    obj['items'] = data;
+    obj[storageKey] = data;
     chrome.storage.sync.set(obj);
 });
