@@ -47,7 +47,6 @@
     function setGeneratedValue(value) {
         generated = value;
         setToFocusedElement(value);
-        console.log(value);
     }
 
     function setToFocusedElement(value) {
@@ -55,7 +54,11 @@
             .then((x) => {
                 window.chrome.scripting.executeScript({
                     target: { tabId: x[0].id },
-                    function: (val) => document.activeElement.value = val,
+                    function: (val) => {
+                        document.activeElement.value = val;
+                        const changeEvent = new Event("input");
+                        document.activeElement.dispatchEvent(changeEvent);
+                    },
                     args: [value]
                 });
             });
