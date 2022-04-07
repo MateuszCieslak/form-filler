@@ -39,7 +39,7 @@
                 return;
             }
             input.value = inputData.value;
-            const changeEvent = new Event("input");
+            const changeEvent = new Event(input.localName === "select" ? "change" : "input");
             input.dispatchEvent(changeEvent);
         });
     }
