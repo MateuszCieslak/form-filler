@@ -49,7 +49,6 @@
     const removeInput = i => () => form.inputs = form.inputs.filter((val, index) => index !== i);
 
     async function submit() {
-        console.log(form);
         let items = await getData('items');
         items = items.filter(i => i.id !== form.id);
         items = [...items, form];

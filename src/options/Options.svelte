@@ -3,9 +3,11 @@
     import { getData, saveData } from "../data.service";
     import Create from "./Create.svelte";
     import { cubicOut } from "svelte/easing";
+    import ImportTemplates from "./ImportTemplates.svelte";
 
     let items = [];
     let currentItem;
+    let importOpen = false;
 
     onMount(async () => {
         items = await getData('items');
@@ -58,6 +60,21 @@
         items = [...items, event.detail];
         close();
     }
+
+    function exportTemplates() {
+        const blob = new Blob([JSON.stringify(items)], {type: 'text/json'});
+        const elem = window.document.createElement('a');
+        elem.href = window.URL.createObjectURL(blob);
+        elem.download = "export.json";
+        document.body.appendChild(elem);
+        elem.click();
+        document.body.removeChild(elem);
+    }
+
+    function importFinished(data) {
+        items = data.detail;
+        importOpen = false;
+    }
 </script>
 
 <main class="container">
@@ -76,8 +93,14 @@
 
     {#if !createMode}
         <div in:spin="{{ x:200, duration: 1000 }}" out:spin="{{ x: -200, duration: 1000 }}">
-            <div>
-                <button class="btn btn-outline-primary" on:click={onAddClick}>Add template</button>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <button class="btn btn-outline-primary" on:click={onAddClick}>Add template</button>
+                </div>
+                <div>
+                    <button class="btn btn-outline-secondary" on:click={() => importOpen = true}>Import</button>
+                    <button class="btn btn-outline-secondary" on:click={exportTemplates}>Export</button>
+                </div>
             </div>
 
             <h2 class="heading-secondary mb-4">Templates list</h2>
@@ -105,6 +128,10 @@
                 <div class="alert alert-warning">Empty list</div>
             {/if}
         </div>
+    {/if}
+
+    {#if importOpen}
+        <ImportTemplates on:templatesImported={importFinished}></ImportTemplates>
     {/if}
 </main>
 
