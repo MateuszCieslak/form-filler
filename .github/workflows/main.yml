@@ -54,7 +54,6 @@ jobs:
         with:
           HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
           PORT: ${{ secrets.PORT }}
           KEY: ${{ secrets.SSHKEY }}
           #source: "."
