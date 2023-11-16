@@ -75,6 +75,6 @@ jobs:
           PORT: ${{ secrets.PORT }}
           KEY: ${{ secrets.SSHKEY }}
           #source: "."
-          source: "path/"
+          source: "public/"
           target: "/var/www/citest"
           strip_components: 1 # this is important:
